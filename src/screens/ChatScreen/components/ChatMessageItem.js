@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { createRef } from 'react';
 import { TouchableOpacity, Dimensions, View } from 'react-native';
 import PropTypes from 'prop-types';
@@ -6,15 +7,26 @@ import Hyperlink from 'react-native-hyperlink';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Markdown from 'react-native-markdown-display';
 import ActionSheet from 'react-native-actions-sheet';
-
+import RenderHtml from 'react-native-render-html';
+import DOMParser from 'react-native-html-parser';
 import CustomText from 'components/Text';
 import { messageStamp } from 'helpers/TimeHelper';
 import { openURL } from 'helpers/UrlHelper';
 import ChatMessageActionItem from './ChatMessageActionItem';
 import { showToast } from 'helpers/ToastHelper';
 
+import { CONTENT_TYPES, MESSAGE_TYPES } from 'constants';
+
 const LockIcon = (style) => {
   return <Icon {...style} name="lock" />;
+};
+
+const isEmailContentType = ({ message }) => {
+  return message.content_type === CONTENT_TYPES.INCOMING_EMAIL;
+};
+
+const isIncoming = ({ message }) => {
+  return message.message_type === MESSAGE_TYPES.INCOMING;
 };
 
 const styles = (theme) => ({
@@ -137,6 +149,33 @@ const propTypes = {
 };
 
 const ChatMessageItemComponent = ({ type, message, eva: { style, theme }, created_at }) => {
+  let html = `
+        <h1>This HTML snippet is now rendered with native components !</h1>
+        <h2>Enjoy a webview-free and blazing fast application</h2>
+        <img src="https://i.imgur.com/dHLmxfO.jpg?2" />
+        <em style="textAlign: center;">Look at how happy this native cat is</em>
+    `;
+
+  if (isEmailContentType({ message })) {
+    // console.log('message', message);
+    const {
+      content_attributes: {
+        email: { html_content: { full: fullHTMLContent, reply: replyHTMLContent } = {} } = {},
+      } = {},
+    } = message;
+    if ((replyHTMLContent || fullHTMLContent) && isIncoming({ message })) {
+      const parser = new DOMParser.DOMParser();
+      const parsedContent = parser.parseFromString(
+        replyHTMLContent || fullHTMLContent || '',
+        'text/html',
+      );
+      // if (!parsedContent.getElementsByTagName('parsererror').length) {
+      // console.log('parsedContent.body.innerHTML', parsedContent);
+      // return parsedContent.body.innerHTML;
+      // }
+    }
+  }
+
   const actionSheetRef = createRef();
   const senderName = message && message.sender && message.sender.name ? message.sender.name : '';
   const messageViewStyle = type === 'outgoing' ? style.messageRight : style.messageLeft;
@@ -190,7 +229,7 @@ const ChatMessageItemComponent = ({ type, message, eva: { style, theme }, create
           </React.Fragment>
         ) : (
           <Hyperlink linkStyle={style.linkStyle} onPress={(url) => handleURL(url)}>
-            <CustomText style={messageTextStyle}>{message.content}</CustomText>
+            <RenderHtml source={{ html }} />
           </Hyperlink>
         )}
         <View style={style.dateView}>

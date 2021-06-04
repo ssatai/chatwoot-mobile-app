@@ -124,3 +124,7 @@ export const SETTINGS_ITEMS = [
     itemName: 'logout',
   },
 ];
+
+export const CONTENT_TYPES = {
+  INCOMING_EMAIL: 'incoming_email',
+};
