@@ -2,7 +2,7 @@ import { light } from '@eva-design/eva';
 
 export const theme = {
   ...light,
-  'color-primary-default': '#1F93FF',
+  'color-primary-default': '#FF6A81',
 
   'color-basic-transparent-300': '$color-primary-500',
   'color-primary-focus': '$color-primary-default',
