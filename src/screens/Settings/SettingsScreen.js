@@ -152,7 +152,7 @@ const Settings = ({ eva: { theme, style } }) => {
           ))}
         </View>
         <View style={style.aboutView}>
-          <Image style={style.aboutImage} source={images.appLogo} />
+          <Image style={style.aboutImage} source={images.login} />
         </View>
 
         <View style={style.appDescriptionView}>

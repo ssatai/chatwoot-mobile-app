@@ -121,7 +121,7 @@ const LoginScreenComponent = ({ navigation, eva }) => {
     <SafeAreaView style={style.keyboardView}>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={style.logoView}>
-          <Image style={style.logo} source={images.login} />
+          <Image style={style.logo} source={images.appLogo} />
         </View>
         <View style={style.titleView}>
           <CustomText style={style.titleText}>{i18n.t('LOGIN.TITLE')}</CustomText>
